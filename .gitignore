@@ -1,0 +1,24 @@
+# Maven target folder
+/target/
+
+# Compiled class files
+*.class
+
+# NetBeans project settings (user-specific)
+/nbproject/private/
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files (optional)
+*.iml
+*.idea/
+
+# Maven generated files
+/maven-status/
+
