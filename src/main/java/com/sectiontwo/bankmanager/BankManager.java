@@ -2,6 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 
+// Net beans is pushing correctly
 package com.sectiontwo.bankmanager;
 
 import view.LoginPanel;
