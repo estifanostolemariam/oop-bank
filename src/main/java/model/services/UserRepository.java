@@ -13,10 +13,7 @@ import model.account.TransactionStatus;
 import model.users.Role;
 import model.users.User;
 import view.TransactionPanel;
-/**
- *
- * @author estifanos
- */
+
 public class UserRepository {
     private Map<String, User> users = new HashMap<>();
     // stores (username, User object) pairs
@@ -71,3 +68,4 @@ public class UserRepository {
         System.out.println("Saved everything to DB!");
     }
 }
+
