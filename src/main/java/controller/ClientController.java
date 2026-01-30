@@ -16,6 +16,7 @@ import model.users.Client;
 import model.users.Session;
 import view.MainFrame;
 
+// Controller for interacting with client-related services.
 public class ClientController {
     private MainFrame mainFrame;
     private ClientService clientService;
@@ -28,6 +29,7 @@ public class ClientController {
     }
 
     public void deposit(Client client, String rawAmount) throws NumberFormatException, EmptyFieldException  {
+        // Make sure field isn't empty
         if (rawAmount.length()==0) {
             throw new EmptyFieldException("Field cannot be empty");
         }
@@ -36,14 +38,16 @@ public class ClientController {
     }
     
     public void withdraw(Client client, String rawAmount) throws InsufficientFundsException, NumberFormatException, EmptyFieldException {
+        // Make sure field isn't empty
         if (rawAmount.length()==0) {
             throw new EmptyFieldException("Field cannot be empty");
         }
         double amount = Double.parseDouble(rawAmount);
         clientService.withdraw(client, amount);
     }
-    
+
     public void requestLoan(Client client, String rawAmount) throws LowCreditScoreException, UnpaidLoanException, NumberFormatException, EmptyFieldException { 
+        // Make sure field isn't empty
         if (rawAmount.length()==0) {
             throw new EmptyFieldException("Field cannot be empty");
         }
@@ -55,3 +59,4 @@ public class ClientController {
         clientService.repayLoan(client, t);
     }
 }
+
