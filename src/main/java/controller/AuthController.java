@@ -15,9 +15,11 @@ import model.users.Session;
 import model.users.User;
 import view.MainFrame;
 
+// Controller class for interacting with authentication service.
 public class AuthController {
     private MainFrame mainFrame;
     private AuthService authService;
+    // Store current user information.
     private Session session;
     
     public AuthController(MainFrame mainframe, AuthService authService, Session session) {
@@ -26,6 +28,7 @@ public class AuthController {
         this.session = session;
     }
 
+    // Handle login and sned error signals to view if necessary.
     public LoginStatus Login(String username, String password) {
         try {
             User user = this.authService.login(username, password);
@@ -38,7 +41,8 @@ public class AuthController {
         }
         return LoginStatus.SUCCESS;   
     }
-    
+
+    // Handle signup and sned error signals to view if necessary.
     public SignupStatus Signup(Role role, String name, String username, String password) {
         try {
             this.authService.signUp(role, name, username, password);
@@ -51,8 +55,10 @@ public class AuthController {
         }
         return SignupStatus.SUCCESS;
     }
-    
+
+    // Handle logout.
     public void Logout() {
         session.logout();
     }
 }
+
