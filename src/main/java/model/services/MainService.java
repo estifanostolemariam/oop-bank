@@ -4,6 +4,7 @@
  */
 package model.services;
 
+// Master/Main service to pass services and user repository/DB.
 public class MainService {
     private AuthService authService;
     private ClientService clientService;
