@@ -6,7 +6,9 @@ package model.users;
 
 import model.account.Transaction;
 
+// Interface for users that can approve or reject transactions.
 public interface Approvable {
     void approve(Transaction t);
     void reject(Transaction t);
 }
+
