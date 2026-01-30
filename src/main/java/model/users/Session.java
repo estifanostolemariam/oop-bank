@@ -4,6 +4,7 @@
  */
 package model.users;
 
+// Session object to store current info across controllers.
 public class Session {
     private User currentUser;
 
@@ -26,4 +27,5 @@ public class Session {
         this.currentUser = null;
     }
 }
+
 
