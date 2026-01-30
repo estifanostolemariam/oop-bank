@@ -4,6 +4,8 @@
  */
 package model.users;
 
+// interface for users that must be authenticated.
 public interface Authenticatable {
     boolean authenticate(String password);
 }
+
