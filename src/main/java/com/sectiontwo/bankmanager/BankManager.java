@@ -5,13 +5,15 @@
 // Net beans is pushing correctly
 package com.sectiontwo.bankmanager;
 
+import model.services.MainService;
+import model.services.UserRepository;
+
 import view.LoginPanel;
 import view.MainFrame;
-import controller.AppController;
-/**
- *
- * @author estifanos
- */
+
+import controller.MainController;
+
+// Main program
 public class BankManager {
 
     public static void main(String[] args) {
@@ -20,9 +22,14 @@ public class BankManager {
         // Launch the GUI on the Event Dispatch Thread
         java.awt.EventQueue.invokeLater(() -> {
             MainFrame mainFrame = new MainFrame();
-            AppController appController = new AppController(mainFrame);
-            LoginPanel loginPanel = new LoginPanel(mainFrame, appController);
-                    
+            
+            // Initialize database, and controller and service (model).
+            UserRepository userRepo = new UserRepository("db");
+            MainService mainService = new MainService(userRepo);
+            MainController mainController = new MainController(mainFrame, mainService);
+            
+            // Start in the login panel.
+            LoginPanel loginPanel = new LoginPanel(mainFrame, mainController);        
             mainFrame.setVisible(true);
             mainFrame.showScreen(loginPanel);
         });
