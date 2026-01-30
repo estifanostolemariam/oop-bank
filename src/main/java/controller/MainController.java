@@ -10,6 +10,7 @@ import model.users.Session;
 import model.users.User;
 import view.MainFrame;
 
+// Main/MasterController for passing controllers between view panels.
 public class MainController {
     private AuthController authController;
     private ClientController clientController;
@@ -21,7 +22,8 @@ public class MainController {
         clientController = new ClientController(mainFrame, mainService.getClientService(), session);
         adminController = new AdminController(mainFrame, mainService.getAdminService(), session);
     }
-    
+
+    // Getters
     public User getCurrentUser() {
         return session.getCurrentUser();
     }
@@ -29,3 +31,4 @@ public class MainController {
     public ClientController getClientController() { return clientController; }
     public AdminController getAdminController() { return adminController; }
 }
+
