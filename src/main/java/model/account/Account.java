@@ -60,7 +60,7 @@ public class Account{
         }
         this.balance -= t.getAmount();
         t.setStatus(TransactionStatus.COMPLETED);
-        this.creditScore += 20;
+        this.creditScore += 5;
     }
     // Add transaction to account transactions
     public void addTransaction(Transaction t) { this.transactions.add(t); }
