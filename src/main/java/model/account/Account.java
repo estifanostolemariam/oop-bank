@@ -31,7 +31,17 @@ public class Account{
 
     // Calculate required credit for transaction.
     public int requiredCredit(Transaction t) {
-        return 250;
+        // Calculate the loan ratio
+        double loanRatio = t.getAmount() / this.balance;
+        double extraPoints = (loanRatio - 0.8) * 100; // multiply by 100 to scale as per formula
+        int requiredCreditScore = (int) Math.ceil(250 + extraPoints);
+    
+        // Make sure credit score doesn't go below 250
+        if (requiredCreditScore < 250) {
+            requiredCreditScore = 250;
+        }
+    
+        return requiredCreditScore;
     }
 
     // Check for any unresolved loans.
