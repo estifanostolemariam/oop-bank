@@ -59,7 +59,7 @@ public class UserRepository {
     public ArrayList<User> findBySearchTerm(String searchTerm) {
         ArrayList<User> Results = new ArrayList<User>();
         for (User user : getAllUsers()) {
-            if (user.getName().contains(searchTerm) | user.getUsername().contains(searchTerm)) { Results.add(user); }
+            if (user.getName().contains(searchTerm) || user.getUsername().contains(searchTerm)) { Results.add(user); }
         }
         return Results;
     }   
@@ -204,4 +204,5 @@ public class UserRepository {
     }
 
 }
+
 
