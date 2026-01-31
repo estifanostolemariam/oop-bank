@@ -64,7 +64,6 @@ public class LoanPanel extends javax.swing.JPanel {
         submitButton.addActionListener(this::submitButtonActionPerformed);
 
         loanField.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        loanField.setText("Amount");
         loanField.addActionListener(this::loanFieldActionPerformed);
 
         errorLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
