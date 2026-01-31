@@ -33,7 +33,7 @@ public class AuthService  {
             throw new UsernameExistsException("Username is taken.");
         }
 
-        // 3. Create client user
+        // 2. Create user
         User newUser;
         switch (userRole) {
             case Role.CLIENT -> { 
@@ -46,10 +46,8 @@ public class AuthService  {
             default -> throw new IllegalArgumentException("Unknown role");
         }
         
-        // 4. Store in repository
+        // 3. Store in repository
         repo.addUser(newUser); // in-memory
-        repo.saveData("db.txt"); // persist to TXT
-
         return newUser;
     }
 
@@ -64,3 +62,4 @@ public class AuthService  {
         return user;
     }
 }
+
