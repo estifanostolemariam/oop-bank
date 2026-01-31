@@ -4,6 +4,11 @@
  */
 package view.client;
 
+import controller.MainController;
+import model.exceptions.EmptyFieldException;
+import model.exceptions.LowCreditScoreException;
+import model.exceptions.UnpaidLoanException;
+import model.users.Client;
 import view.LoginPanel;
 import view.MainFrame;
 
@@ -14,13 +19,17 @@ import view.MainFrame;
 public class LoanPanel extends javax.swing.JPanel {
 
     private MainFrame mainFrame;
+    private MainController mainController;
     /**
      * Creates new form LoanPanel
      */
-    public LoanPanel(MainFrame mainFrame) {
+    public LoanPanel(MainFrame mainFrame, MainController mainController) {
         initComponents();
         
         this.mainFrame = mainFrame;
+        this.mainController = mainController;
+        Client currentUser = (Client) this.mainController.getCurrentUser();
+        this.nameLabel.setText("Logged in as "+currentUser.getName()+" (Client)");
     }
 
     /**
@@ -35,11 +44,8 @@ public class LoanPanel extends javax.swing.JPanel {
         jPanel4 = new javax.swing.JPanel();
         balanceInfo = new javax.swing.JPanel();
         loanLabel = new javax.swing.JLabel();
-        collateralField = new javax.swing.JTextField();
-        borrowLabel = new javax.swing.JLabel();
-        borrowField = new javax.swing.JTextField();
-        collateralLabel = new javax.swing.JLabel();
         submitButton = new javax.swing.JButton();
+        loanField = new javax.swing.JTextField();
         errorLabel = new javax.swing.JLabel();
         nameLabel = new javax.swing.JLabel();
         logoutButton = new javax.swing.JButton();
@@ -52,22 +58,14 @@ public class LoanPanel extends javax.swing.JPanel {
         loanLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         loanLabel.setText("Apply for a Loan");
 
-        collateralField.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        collateralField.addActionListener(this::collateralFieldActionPerformed);
-
-        borrowLabel.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        borrowLabel.setText("Amount to borrow");
-
-        borrowField.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        borrowField.addActionListener(this::borrowFieldActionPerformed);
-
-        collateralLabel.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        collateralLabel.setText("Collateral");
-
         submitButton.setBackground(new java.awt.Color(248, 248, 248));
         submitButton.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         submitButton.setText("Submit Application");
         submitButton.addActionListener(this::submitButtonActionPerformed);
+
+        loanField.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        loanField.setText("Amount");
+        loanField.addActionListener(this::loanFieldActionPerformed);
 
         errorLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         errorLabel.setForeground(new java.awt.Color(204, 0, 51));
@@ -78,39 +76,28 @@ public class LoanPanel extends javax.swing.JPanel {
         balanceInfoLayout.setHorizontalGroup(
             balanceInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(balanceInfoLayout.createSequentialGroup()
+                .addGap(35, 35, 35)
                 .addGroup(balanceInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(errorLabel)
                     .addGroup(balanceInfoLayout.createSequentialGroup()
-                        .addGap(124, 124, 124)
-                        .addGroup(balanceInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(collateralField, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(borrowLabel)
-                            .addComponent(submitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(borrowField, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(collateralLabel)
-                            .addComponent(errorLabel)))
-                    .addGroup(balanceInfoLayout.createSequentialGroup()
-                        .addGap(165, 165, 165)
-                        .addComponent(loanLabel)))
-                .addContainerGap(144, Short.MAX_VALUE))
+                        .addComponent(loanField, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(submitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(loanLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         balanceInfoLayout.setVerticalGroup(
             balanceInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(balanceInfoLayout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addGap(55, 55, 55)
                 .addComponent(loanLabel)
-                .addGap(46, 46, 46)
-                .addComponent(borrowLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(borrowField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(collateralLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(collateralField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addGroup(balanceInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(loanField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(submitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(errorLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
-                .addComponent(submitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
 
         nameLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
@@ -131,22 +118,18 @@ public class LoanPanel extends javax.swing.JPanel {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addGap(95, 95, 95)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(balanceInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(balanceInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(HomeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 509, Short.MAX_VALUE)
-                                .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                                .addComponent(nameLabel)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(72, 72, 72))))
+                        .addComponent(HomeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 509, Short.MAX_VALUE)
+                        .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                        .addComponent(nameLabel)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(72, 72, 72))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -159,7 +142,7 @@ public class LoanPanel extends javax.swing.JPanel {
                 .addComponent(nameLabel)
                 .addGap(18, 18, 18)
                 .addComponent(balanceInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addContainerGap(228, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -174,38 +157,41 @@ public class LoanPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void collateralFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collateralFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_collateralFieldActionPerformed
-
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
-        // TODO add your handling code here:
-        //this.mainFrame.showScreen(new LoginPanel(mainFrame));
+        mainController.getAuthController().Logout();
+        this.mainFrame.showScreen(new LoginPanel(mainFrame, mainController));
     }//GEN-LAST:event_logoutButtonActionPerformed
 
     private void HomeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HomeButtonActionPerformed
-        // TODO add your handling code here:
-//        this.mainFrame.showScreen(new HomePanel(mainFrame));
+        this.mainFrame.showScreen(new HomePanel(mainFrame, this.mainController));
     }//GEN-LAST:event_HomeButtonActionPerformed
 
-    private void borrowFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrowFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_borrowFieldActionPerformed
-
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
-        // TODO add your handling code here:
+        try {
+            this.mainController.getClientController().requestLoan((Client) this.mainController.getCurrentUser(), this.loanField.getText().trim());
+            this.mainFrame.showScreen(new HomePanel(mainFrame, this.mainController));
+        } catch (NumberFormatException e) {
+            errorLabel.setText("Please enter a valid number amount.");
+        } catch (EmptyFieldException e) {
+            errorLabel.setText("No empty fields allowed.");
+        } catch (LowCreditScoreException ex) {
+            errorLabel.setText("Credit is too low to borrow that amount.");
+        } catch (UnpaidLoanException ex) {
+            errorLabel.setText("Settle outstanding loan before applying for a new one.");
+        }
     }//GEN-LAST:event_submitButtonActionPerformed
+
+    private void loanFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loanFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_loanFieldActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton HomeButton;
     private javax.swing.JPanel balanceInfo;
-    private javax.swing.JTextField borrowField;
-    private javax.swing.JLabel borrowLabel;
-    private javax.swing.JTextField collateralField;
-    private javax.swing.JLabel collateralLabel;
     private javax.swing.JLabel errorLabel;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JTextField loanField;
     private javax.swing.JLabel loanLabel;
     private javax.swing.JButton logoutButton;
     private javax.swing.JLabel nameLabel;

@@ -4,8 +4,13 @@
  */
 package view.admin;
 
+import controller.MainController;
+import java.util.ArrayList;
+import model.users.Admin;
+import model.users.User;
 import view.LoginPanel;
 import view.MainFrame;
+import view.UserPanel;
 
 /**
  *
@@ -13,13 +18,23 @@ import view.MainFrame;
  */
 public class SearchResultsPanel extends javax.swing.JPanel {
     private MainFrame mainFrame;
+    private MainController mainController;
+    private ArrayList<User> searchResult;
     /**
      * Creates new form SearchResultsPanel
      */
-    public SearchResultsPanel(MainFrame mainFrame) {
+    public SearchResultsPanel(MainFrame mainFrame, MainController mainController, String searchTerm) {
         initComponents();
         
         this.mainFrame = mainFrame;
+        this.mainController = mainController;
+        
+        Admin currentUser = (Admin) this.mainController.getCurrentUser();
+        this.nameLabel.setText("Logged in as "+currentUser.getName()+" (Admin)");
+        this.activityLabel.setText("Viewing results for \""+searchTerm+"\"");
+        this.searchField.setText(searchTerm);
+        this.searchResult = this.mainController.getAdminController().findBySearchTerm(searchTerm);
+        renderUsers(this.searchResult);
     }
 
     /**
@@ -34,14 +49,12 @@ public class SearchResultsPanel extends javax.swing.JPanel {
         jPanel4 = new javax.swing.JPanel();
         activityLabel = new javax.swing.JLabel();
         logoutButton = new javax.swing.JButton();
-        userName = new javax.swing.JLabel();
+        nameLabel = new javax.swing.JLabel();
         searchField = new javax.swing.JTextField();
-        logoutButton1 = new javax.swing.JButton();
+        searchButton = new javax.swing.JButton();
         homeBurron = new javax.swing.JButton();
-        pendingPanel = new javax.swing.JScrollPane();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jPanel8 = new javax.swing.JPanel();
+        resultPanel = new javax.swing.JScrollPane();
+        resultContainer = new javax.swing.JPanel();
 
         jPanel4.setBackground(new java.awt.Color(248, 248, 248));
 
@@ -54,64 +67,25 @@ public class SearchResultsPanel extends javax.swing.JPanel {
         logoutButton.setText("Log out");
         logoutButton.addActionListener(this::logoutButtonActionPerformed);
 
-        userName.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
-        userName.setText("Logged in as Akrem K. (Admin)");
+        nameLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
+        nameLabel.setText("Logged in as Akrem K. (Admin)");
 
         searchField.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         searchField.setText("Search for an Account");
 
-        logoutButton1.setBackground(new java.awt.Color(248, 248, 248));
-        logoutButton1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        logoutButton1.setText("Search");
-        logoutButton1.addActionListener(this::logoutButton1ActionPerformed);
+        searchButton.setBackground(new java.awt.Color(248, 248, 248));
+        searchButton.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        searchButton.setText("Search");
+        searchButton.addActionListener(this::searchButtonActionPerformed);
 
         homeBurron.setBackground(new java.awt.Color(248, 248, 248));
         homeBurron.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         homeBurron.setText("Home");
         homeBurron.addActionListener(this::homeBurronActionPerformed);
 
-        pendingPanel.setMaximumSize(new java.awt.Dimension(32767, 40));
-        pendingPanel.setMinimumSize(new java.awt.Dimension(16, 40));
-        pendingPanel.setPreferredSize(new java.awt.Dimension(733, 40));
-
-        jPanel1.setBackground(new java.awt.Color(204, 255, 255));
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
-
-        jPanel3.setMaximumSize(new java.awt.Dimension(32767, 40));
-        jPanel3.setMinimumSize(new java.awt.Dimension(731, 40));
-        jPanel3.setPreferredSize(new java.awt.Dimension(739, 40));
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 739, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
-        );
-
-        jPanel1.add(jPanel3);
-
-        jPanel8.setMaximumSize(new java.awt.Dimension(32767, 40));
-        jPanel8.setMinimumSize(new java.awt.Dimension(731, 40));
-        jPanel8.setPreferredSize(new java.awt.Dimension(739, 40));
-
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 739, Short.MAX_VALUE)
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
-        );
-
-        jPanel1.add(jPanel8);
-
-        pendingPanel.setViewportView(jPanel1);
+        resultContainer.setBackground(new java.awt.Color(255, 255, 255));
+        resultContainer.setLayout(new javax.swing.BoxLayout(resultContainer, javax.swing.BoxLayout.Y_AXIS));
+        resultPanel.setViewportView(resultContainer);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -120,19 +94,19 @@ public class SearchResultsPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addGap(95, 95, 95)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(pendingPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(resultPanel)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(userName)
+                                .addComponent(nameLabel)
                                 .addComponent(activityLabel, javax.swing.GroupLayout.Alignment.LEADING))
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addComponent(homeBurron, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(logoutButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
                         .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(72, 72, 72))
         );
@@ -142,16 +116,16 @@ public class SearchResultsPanel extends javax.swing.JPanel {
                 .addGap(21, 21, 21)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logoutButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(homeBurron, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
-                .addComponent(userName)
+                .addComponent(nameLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(activityLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
-                .addComponent(pendingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(17, 17, 17))
+                .addGap(51, 51, 51)
+                .addComponent(resultPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -167,30 +141,38 @@ public class SearchResultsPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
-        // TODO add your handling code here:
-        //this.mainFrame.showScreen(new LoginPanel(mainFrame));
+        mainController.getAuthController().Logout();
+        this.mainFrame.showScreen(new LoginPanel(mainFrame, mainController));
     }//GEN-LAST:event_logoutButtonActionPerformed
 
-    private void logoutButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_logoutButton1ActionPerformed
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        if (searchField.getText().trim().length() > 0) {
+            this.mainFrame.showScreen(new SearchResultsPanel(mainFrame, this.mainController, searchField.getText().trim()));
+        }
+    }//GEN-LAST:event_searchButtonActionPerformed
 
     private void homeBurronActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeBurronActionPerformed
-        // TODO add your handling code here:
+        this.mainFrame.showScreen(new HomePanel(mainFrame, this.mainController));
     }//GEN-LAST:event_homeBurronActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel activityLabel;
     private javax.swing.JButton homeBurron;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JButton logoutButton;
-    private javax.swing.JButton logoutButton1;
-    private javax.swing.JScrollPane pendingPanel;
+    private javax.swing.JLabel nameLabel;
+    private javax.swing.JPanel resultContainer;
+    private javax.swing.JScrollPane resultPanel;
+    private javax.swing.JButton searchButton;
     private javax.swing.JTextField searchField;
-    private javax.swing.JLabel userName;
     // End of variables declaration//GEN-END:variables
+    public void renderUsers(ArrayList<User> users) {
+        resultContainer.removeAll();
+        if (users == null) {return;}
+        for (User user : users) {
+            resultContainer.add(new UserPanel(mainFrame, mainController, user));
+        }
+        resultContainer.revalidate();
+        resultContainer.repaint();
+    }
 }

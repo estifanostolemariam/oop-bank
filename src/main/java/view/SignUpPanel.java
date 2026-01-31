@@ -4,7 +4,9 @@
  */
 package view;
 
-import controller.AppController;
+import controller.MainController;
+import model.services.SignupStatus;
+import model.users.Role;
 import view.client.HomePanel;
 
 /**
@@ -14,14 +16,14 @@ import view.client.HomePanel;
 public class SignUpPanel extends javax.swing.JPanel {
 
     private MainFrame mainFrame;
-    private AppController controller;
+    private MainController mainController;
     /**
      * Creates new form SignUpPanel
      */
-    public SignUpPanel(MainFrame mainFrame, AppController controller) {
+    public SignUpPanel(MainFrame mainFrame, MainController mainController) {
         initComponents();
         this.mainFrame = mainFrame;
-        this.controller = controller;
+        this.mainController = mainController;
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -34,14 +36,14 @@ public class SignUpPanel extends javax.swing.JPanel {
 
         jPanel2 = new javax.swing.JPanel();
         signupButton = new javax.swing.JButton();
-        gtLogin = new javax.swing.JLabel();
+        loginLabel = new javax.swing.JLabel();
         loginButton = new javax.swing.JButton();
         accountField = new javax.swing.JTextField();
         signupText = new javax.swing.JTextPane();
-        jPasswordField1 = new javax.swing.JPasswordField();
-        accountField1 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jLabel1 = new javax.swing.JLabel();
+        passwordField = new javax.swing.JPasswordField();
+        nameField = new javax.swing.JTextField();
+        userRole = new javax.swing.JComboBox<>();
+        iAm = new javax.swing.JLabel();
         errorLabel = new javax.swing.JLabel();
 
         jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -55,8 +57,8 @@ public class SignUpPanel extends javax.swing.JPanel {
         signupButton.setPreferredSize(new java.awt.Dimension(73, 26));
         signupButton.addActionListener(this::signupButtonActionPerformed);
 
-        gtLogin.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        gtLogin.setText("Already have an account?");
+        loginLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        loginLabel.setText("Already have an account?");
 
         loginButton.setBackground(new java.awt.Color(242, 242, 242));
         loginButton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -80,23 +82,23 @@ public class SignUpPanel extends javax.swing.JPanel {
         signupText.setFocusable(false);
         signupText.setOpaque(false);
 
-        jPasswordField1.setText("Password");
-        jPasswordField1.setToolTipText("Enter your password here.");
+        passwordField.setText("Password");
+        passwordField.setToolTipText("Enter your password here.");
 
-        accountField1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        accountField1.setText("Your name");
-        accountField1.setToolTipText("Enter your username here.");
-        accountField1.setMaximumSize(new java.awt.Dimension(80, 30));
-        accountField1.setName("Account"); // NOI18N
-        accountField1.setPreferredSize(new java.awt.Dimension(73, 26));
-        accountField1.addActionListener(this::accountField1ActionPerformed);
+        nameField.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        nameField.setText("Your name");
+        nameField.setToolTipText("Enter your username here.");
+        nameField.setMaximumSize(new java.awt.Dimension(80, 30));
+        nameField.setName("Account"); // NOI18N
+        nameField.setPreferredSize(new java.awt.Dimension(73, 26));
+        nameField.addActionListener(this::nameFieldActionPerformed);
 
-        jComboBox1.setBackground(new java.awt.Color(248, 248, 248));
-        jComboBox1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "a Client", "an Admin" }));
+        userRole.setBackground(new java.awt.Color(248, 248, 248));
+        userRole.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        userRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "a Client", "an Admin" }));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel1.setText("I am ");
+        iAm.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        iAm.setText("I am ");
 
         errorLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         errorLabel.setForeground(new java.awt.Color(204, 0, 0));
@@ -115,16 +117,16 @@ public class SignUpPanel extends javax.swing.JPanel {
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(signupButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                    .addComponent(jLabel1)
+                                    .addComponent(iAm)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(userRole, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addComponent(signupText)
                                 .addComponent(accountField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jPasswordField1)
-                                .addComponent(accountField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addComponent(passwordField)
+                                .addComponent(nameField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(122, 122, 122)
-                        .addComponent(gtLogin)
+                        .addComponent(loginLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(loginButton)))
                 .addContainerGap(82, Short.MAX_VALUE))
@@ -136,14 +138,14 @@ public class SignUpPanel extends javax.swing.JPanel {
                 .addComponent(signupText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(iAm)
+                    .addComponent(userRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(accountField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(accountField, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(signupButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -151,7 +153,7 @@ public class SignUpPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(loginButton)
-                    .addComponent(gtLogin))
+                    .addComponent(loginLabel))
                 .addGap(94, 94, 94))
         );
 
@@ -160,22 +162,35 @@ public class SignUpPanel extends javax.swing.JPanel {
 
     private void signupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signupButtonActionPerformed
         // TODO add your handling code here:
-        showError("Error");
+        String selectedRole = (String) userRole.getSelectedItem();
+        Role role = Role.CLIENT;
+        if (selectedRole == "an Admin") {role = Role.ADMIN;}
+        SignupStatus status = this.mainController.getAuthController().Signup(
+                role,
+                this.nameField.getText().trim(), 
+                this.accountField.getText().trim(), 
+                new String(passwordField.getPassword()));
+        switch (status) {
+            case SignupStatus.EMPTY_FIELDS: showError("No empty fields allowed."); break;
+            case SignupStatus.USERNAME_EXISTS: showError("Username already taken."); break;
+            case SignupStatus.SHORT_PASSWORD: showError("Password must be greater than 8 characters."); break;
+            case SignupStatus.SUCCESS: this.mainFrame.showScreen(new LoginPanel(mainFrame, this.mainController)); break;
+        }
         //this.mainFrame.showScreen(new HomePanel(mainFrame));
     }//GEN-LAST:event_signupButtonActionPerformed
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         // TODO add your handling code here:
-        this.mainFrame.showScreen(new LoginPanel(mainFrame, this.controller));
+        this.mainFrame.showScreen(new LoginPanel(mainFrame, this.mainController));
     }//GEN-LAST:event_loginButtonActionPerformed
 
     private void accountFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_accountFieldActionPerformed
 
-    private void accountField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountField1ActionPerformed
+    private void nameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_accountField1ActionPerformed
+    }//GEN-LAST:event_nameFieldActionPerformed
 
     private void showError(String msg) {
         errorLabel.setText(msg);
@@ -183,15 +198,15 @@ public class SignUpPanel extends javax.swing.JPanel {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField accountField;
-    private javax.swing.JTextField accountField1;
     private javax.swing.JLabel errorLabel;
-    private javax.swing.JLabel gtLogin;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel iAm;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JButton loginButton;
+    private javax.swing.JLabel loginLabel;
+    private javax.swing.JTextField nameField;
+    private javax.swing.JPasswordField passwordField;
     private javax.swing.JButton signupButton;
     private javax.swing.JTextPane signupText;
+    private javax.swing.JComboBox<String> userRole;
     // End of variables declaration//GEN-END:variables
 }

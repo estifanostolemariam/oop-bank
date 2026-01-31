@@ -4,22 +4,39 @@
  */
 package view.admin;
 
+import controller.MainController;
+import java.util.ArrayList;
+import model.account.Transaction;
+import model.account.TransactionStatus;
+import model.users.Admin;
+import model.users.Client;
 import view.LoginPanel;
 import view.MainFrame;
+import view.Refreshable;
+import view.TransactionPanel;
 
 /**
  *
  * @author estifanos
  */
-public class HomePanel extends javax.swing.JPanel {
+public class HomePanel extends javax.swing.JPanel implements Refreshable {
     private MainFrame mainFrame;
+    private MainController mainController;
+    private ArrayList<Transaction> transactionList;
+    
     /**
      * Creates new form HomePanel
      */
-    public HomePanel(MainFrame mainFrame) {
+    public HomePanel(MainFrame mainFrame, MainController mainController) {
         initComponents();
         
         this.mainFrame = mainFrame;
+        this.mainController = mainController;
+        
+        Admin currentUser = (Admin) this.mainController.getCurrentUser();
+        this.nameLabel.setText("Logged in as "+currentUser.getName()+" (Admin)");
+        this.transactionList = this.mainController.getAdminController().getAllTransactions();        
+        refreshUI();
     }
 
     /**
@@ -33,18 +50,14 @@ public class HomePanel extends javax.swing.JPanel {
 
         jPanel4 = new javax.swing.JPanel();
         logoutButton = new javax.swing.JButton();
-        nameLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        logoutButton1 = new javax.swing.JButton();
+        nameLabel = new javax.swing.JLabel();
+        searchField = new javax.swing.JTextField();
+        searchButton = new javax.swing.JButton();
         activityTabs = new javax.swing.JTabbedPane();
         pendingPanel = new javax.swing.JScrollPane();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jPanel8 = new javax.swing.JPanel();
+        pendingContainer = new javax.swing.JPanel();
         historyPanel = new javax.swing.JScrollPane();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
-        jPanel12 = new javax.swing.JPanel();
+        historyContainer = new javax.swing.JPanel();
 
         jPanel4.setBackground(new java.awt.Color(248, 248, 248));
 
@@ -54,106 +67,28 @@ public class HomePanel extends javax.swing.JPanel {
         logoutButton.setText("Log out");
         logoutButton.addActionListener(this::logoutButtonActionPerformed);
 
-        nameLabel2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
-        nameLabel2.setText("Logged in as Akrem K. (Admin)");
+        nameLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
+        nameLabel.setText("Logged in as Akrem K. (Admin)");
 
-        jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jTextField1.setText("Search for an Account");
+        searchField.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        searchField.setText("Search for an Account");
 
-        logoutButton1.setBackground(new java.awt.Color(248, 248, 248));
-        logoutButton1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        logoutButton1.setText("Search");
-        logoutButton1.addActionListener(this::logoutButton1ActionPerformed);
+        searchButton.setBackground(new java.awt.Color(248, 248, 248));
+        searchButton.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        searchButton.setText("Search");
+        searchButton.addActionListener(this::searchButtonActionPerformed);
 
         activityTabs.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
-        pendingPanel.setMaximumSize(new java.awt.Dimension(32767, 40));
-        pendingPanel.setMinimumSize(new java.awt.Dimension(16, 40));
-        pendingPanel.setPreferredSize(new java.awt.Dimension(733, 40));
+        pendingContainer.setBackground(new java.awt.Color(255, 255, 255));
+        pendingContainer.setLayout(new javax.swing.BoxLayout(pendingContainer, javax.swing.BoxLayout.Y_AXIS));
+        pendingPanel.setViewportView(pendingContainer);
 
-        jPanel1.setBackground(new java.awt.Color(204, 255, 255));
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+        activityTabs.addTab("Pending Transactions", pendingPanel);
 
-        jPanel3.setMaximumSize(new java.awt.Dimension(32767, 40));
-        jPanel3.setMinimumSize(new java.awt.Dimension(731, 40));
-        jPanel3.setPreferredSize(new java.awt.Dimension(739, 40));
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 739, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
-        );
-
-        jPanel1.add(jPanel3);
-
-        jPanel8.setMaximumSize(new java.awt.Dimension(32767, 40));
-        jPanel8.setMinimumSize(new java.awt.Dimension(731, 40));
-        jPanel8.setPreferredSize(new java.awt.Dimension(739, 40));
-
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 739, Short.MAX_VALUE)
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
-        );
-
-        jPanel1.add(jPanel8);
-
-        pendingPanel.setViewportView(jPanel1);
-
-        activityTabs.addTab("Pending Applications", pendingPanel);
-
-        historyPanel.setMaximumSize(new java.awt.Dimension(32767, 40));
-        historyPanel.setMinimumSize(new java.awt.Dimension(16, 40));
-        historyPanel.setPreferredSize(new java.awt.Dimension(733, 40));
-
-        jPanel2.setBackground(new java.awt.Color(204, 255, 255));
-        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
-
-        jPanel5.setMaximumSize(new java.awt.Dimension(32767, 40));
-        jPanel5.setMinimumSize(new java.awt.Dimension(731, 40));
-        jPanel5.setPreferredSize(new java.awt.Dimension(739, 40));
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 739, Short.MAX_VALUE)
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
-        );
-
-        jPanel2.add(jPanel5);
-
-        jPanel12.setMaximumSize(new java.awt.Dimension(32767, 40));
-        jPanel12.setMinimumSize(new java.awt.Dimension(731, 40));
-        jPanel12.setPreferredSize(new java.awt.Dimension(739, 40));
-
-        javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
-        jPanel12.setLayout(jPanel12Layout);
-        jPanel12Layout.setHorizontalGroup(
-            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 739, Short.MAX_VALUE)
-        );
-        jPanel12Layout.setVerticalGroup(
-            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
-        );
-
-        jPanel2.add(jPanel12);
-
-        historyPanel.setViewportView(jPanel2);
+        historyContainer.setBackground(new java.awt.Color(255, 255, 255));
+        historyContainer.setLayout(new javax.swing.BoxLayout(historyContainer, javax.swing.BoxLayout.Y_AXIS));
+        historyPanel.setViewportView(historyContainer);
 
         activityTabs.addTab("Transaction History", historyPanel);
 
@@ -167,10 +102,10 @@ public class HomePanel extends javax.swing.JPanel {
                     .addComponent(activityTabs, javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jTextField1)
-                            .addComponent(nameLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE))
+                            .addComponent(searchField)
+                            .addComponent(nameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(logoutButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(72, 72, 72))
@@ -181,10 +116,10 @@ public class HomePanel extends javax.swing.JPanel {
                 .addGap(21, 21, 21)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logoutButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
-                .addComponent(nameLabel2)
+                .addComponent(nameLabel)
                 .addGap(41, 41, 41)
                 .addComponent(activityTabs, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(15, Short.MAX_VALUE))
@@ -203,29 +138,47 @@ public class HomePanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
-        // TODO add your handling code here:
-//        this.mainFrame.showScreen(new LoginPanel(mainFrame));
+        mainController.getAuthController().Logout();
+        this.mainFrame.showScreen(new LoginPanel(mainFrame, mainController));
+
     }//GEN-LAST:event_logoutButtonActionPerformed
 
-    private void logoutButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_logoutButton1ActionPerformed
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        if (searchField.getText().trim().length() > 0) {
+            this.mainFrame.showScreen(new SearchResultsPanel(mainFrame, this.mainController, searchField.getText().trim()));
+        }
+    }//GEN-LAST:event_searchButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane activityTabs;
+    private javax.swing.JPanel historyContainer;
     private javax.swing.JScrollPane historyPanel;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel12;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JButton logoutButton;
-    private javax.swing.JButton logoutButton1;
-    private javax.swing.JLabel nameLabel2;
+    private javax.swing.JLabel nameLabel;
+    private javax.swing.JPanel pendingContainer;
     private javax.swing.JScrollPane pendingPanel;
+    private javax.swing.JButton searchButton;
+    private javax.swing.JTextField searchField;
     // End of variables declaration//GEN-END:variables
+    @Override
+    public void refreshUI() {
+        refreshTransactionPanel();
+    }
+        
+    public void refreshTransactionPanel() {
+        pendingContainer.removeAll();
+        if (this.transactionList == null) {return;}
+        for (Transaction t : this.transactionList) {
+            if (t.getStatus() == TransactionStatus.PENDING) { pendingContainer.add(new TransactionPanel(t, this.mainController, this)); }
+            else { historyContainer.add(new TransactionPanel(t, this.mainController, this)); }
+        }
+
+        pendingContainer.revalidate();
+        pendingContainer.repaint();
+//        JScrollBar bar = scrollPane.getVerticalScrollBar();
+//        bar.setValue(bar.getMaximum());
+    }
+
 }

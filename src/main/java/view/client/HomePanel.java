@@ -4,32 +4,41 @@
  */
 package view.client;
 
-import controller.AppController;
-import java.awt.List;
+import controller.MainController;
 import java.util.ArrayList;
+import model.account.Transaction;
+import model.account.TransactionStatus;
+import model.users.Client;
+import model.users.User;
 import view.LoginPanel;
 import view.MainFrame;
+import view.Refreshable;
 import view.TransactionPanel;
 
 /**
  *
  * @author estifanos
  */
-public class HomePanel extends javax.swing.JPanel {
+public class HomePanel extends javax.swing.JPanel implements Refreshable {
     private MainFrame mainFrame;
-    private AppController controller;
-    private ArrayList<String> TransactionList;
+    private MainController mainController;
+    private ArrayList<Transaction> transactionList;
     
     /**
      * Creates new form HomePanel
      */
-    public HomePanel(MainFrame mainFrame, AppController controller) {
+    public HomePanel(MainFrame mainFrame, MainController mainController) {
         initComponents();
         this.mainFrame = mainFrame;
-        this.controller = controller;
-        this.TransactionList = new ArrayList<String>();
-        this.TransactionList.add("Genesis transaction");
-        renderTransactions(this.TransactionList);
+        this.mainController = mainController;
+        
+        Client currentUser = (Client) this.mainController.getCurrentUser();
+        this.nameLabel.setText("Logged in as "+currentUser.getName()+" (Client)");
+        this.accountBalanceLabel.setText(String.valueOf(currentUser.getAccount().getBalance()));
+        this.creditScoreLabel.setText(String.valueOf(currentUser.getAccount().getCreditScore()));
+        
+        this.transactionList = currentUser.getAccount().getTransactions();        
+        refreshTransactionPanel();
     }
 
     /**
@@ -55,7 +64,7 @@ public class HomePanel extends javax.swing.JPanel {
         tabPanel = new javax.swing.JTabbedPane();
         pendingPanel = new javax.swing.JScrollPane();
         pendingContainer = new javax.swing.JPanel();
-        historyPanel = new javax.swing.JPanel();
+        historyPanel = new javax.swing.JScrollPane();
         historyContainer = new javax.swing.JPanel();
         logoutButton = new javax.swing.JButton();
 
@@ -158,33 +167,11 @@ public class HomePanel extends javax.swing.JPanel {
         pendingContainer.setLayout(new javax.swing.BoxLayout(pendingContainer, javax.swing.BoxLayout.Y_AXIS));
         pendingPanel.setViewportView(pendingContainer);
 
-        tabPanel.addTab("Pending Applications", pendingPanel);
-
-        historyPanel.setBackground(new java.awt.Color(255, 255, 255));
+        tabPanel.addTab("Pending Transactions", pendingPanel);
 
         historyContainer.setBackground(new java.awt.Color(255, 255, 255));
         historyContainer.setLayout(new javax.swing.BoxLayout(historyContainer, javax.swing.BoxLayout.Y_AXIS));
-
-        javax.swing.GroupLayout historyPanelLayout = new javax.swing.GroupLayout(historyPanel);
-        historyPanel.setLayout(historyPanelLayout);
-        historyPanelLayout.setHorizontalGroup(
-            historyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 733, Short.MAX_VALUE)
-            .addGroup(historyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(historyPanelLayout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(historyContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
-        historyPanelLayout.setVerticalGroup(
-            historyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 238, Short.MAX_VALUE)
-            .addGroup(historyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(historyPanelLayout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(historyContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
+        historyPanel.setViewportView(historyContainer);
 
         tabPanel.addTab("Transaction History", historyPanel);
 
@@ -228,7 +215,7 @@ public class HomePanel extends javax.swing.JPanel {
                     .addComponent(balanceInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(creditInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(tabPanel)
+                .addComponent(tabPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
                 .addGap(19, 19, 19))
         );
 
@@ -246,25 +233,26 @@ public class HomePanel extends javax.swing.JPanel {
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
         // TODO add your handling code here:
-        //this.mainFrame.showScreen(new LoginPanel(mainFrame));
+        mainController.getAuthController().Logout();
+        this.mainFrame.showScreen(new LoginPanel(mainFrame, mainController));
     }//GEN-LAST:event_logoutButtonActionPerformed
 
     private void depositButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_depositButtonActionPerformed
         // TODO add your handling code here:
-        this.mainFrame.showScreen(new DepositPanel(mainFrame));
+        this.mainFrame.showScreen(new DepositPanel(mainFrame, mainController));
     }//GEN-LAST:event_depositButtonActionPerformed
 
     private void withdrawButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_withdrawButtonActionPerformed
         // TODO add your handling code here:
-        this.mainFrame.showScreen(new WithdrawPanel(mainFrame));
+        this.mainFrame.showScreen(new WithdrawPanel(mainFrame, mainController));
     }//GEN-LAST:event_withdrawButtonActionPerformed
 
     private void loanButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loanButtonActionPerformed
         // TODO add your handling code here:
-        this.controller.validateTransaction("New transaction");
-        this.TransactionList.add("New transaction");
-        renderTransactions(this.TransactionList);
-        //this.mainFrame.showScreen(new LoanPanel(mainFrame));
+//        this.mainController.validateTransaction("New transaction");
+//        this.TransactionList.add("New transaction");
+        refreshTransactionPanel();
+        this.mainFrame.showScreen(new LoanPanel(mainFrame, mainController));
     }//GEN-LAST:event_loanButtonActionPerformed
 
 
@@ -276,7 +264,7 @@ public class HomePanel extends javax.swing.JPanel {
     private javax.swing.JLabel creditScoreLabel;
     private javax.swing.JButton depositButton;
     private javax.swing.JPanel historyContainer;
-    private javax.swing.JPanel historyPanel;
+    private javax.swing.JScrollPane historyPanel;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JButton loanButton;
     private javax.swing.JButton logoutButton;
@@ -287,13 +275,18 @@ public class HomePanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane tabPanel;
     private javax.swing.JButton withdrawButton;
     // End of variables declaration//GEN-END:variables
-    public void renderTransactions(ArrayList<String> transactions) {
+    @Override
+    public void refreshUI() {
+        this.mainFrame.showScreen(new HomePanel(mainFrame, mainController));
+        refreshTransactionPanel();
+    }
+    
+    private void refreshTransactionPanel() {
         pendingContainer.removeAll();
-
-        for (String t : transactions) {
-            pendingContainer.add(
-                new TransactionPanel()
-            );
+        if (this.transactionList == null) {return;}
+        for (Transaction t : this.transactionList) {
+            if (t.getStatus() == TransactionStatus.PENDING) { pendingContainer.add(new TransactionPanel(t, this.mainController, this)); }
+            else { historyContainer.add(new TransactionPanel(t, this.mainController, this)); }
         }
 
         pendingContainer.revalidate();

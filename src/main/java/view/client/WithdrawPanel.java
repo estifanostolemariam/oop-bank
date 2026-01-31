@@ -4,6 +4,10 @@
  */
 package view.client;
 
+import controller.MainController;
+import model.exceptions.EmptyFieldException;
+import model.exceptions.InsufficientFundsException;
+import model.users.Client;
 import view.LoginPanel;
 import view.MainFrame;
 
@@ -14,13 +18,17 @@ import view.MainFrame;
 public class WithdrawPanel extends javax.swing.JPanel {
 
     private MainFrame mainFrame;
+    private MainController mainController;
     /**
      * Creates new form WithdrawlPanel
      */
-    public WithdrawPanel(MainFrame mainFrame) {
+    public WithdrawPanel(MainFrame mainFrame, MainController mainController) {
         initComponents();
         
         this.mainFrame = mainFrame;
+        this.mainController = mainController;
+        Client currentUser = (Client) this.mainController.getCurrentUser();
+        this.nameLabel.setText("Logged in as "+currentUser.getName()+" (Client)");
     }
 
     /**
@@ -37,7 +45,6 @@ public class WithdrawPanel extends javax.swing.JPanel {
         withdrawLabel = new javax.swing.JLabel();
         withdrawButton = new javax.swing.JButton();
         withdrawalField = new javax.swing.JTextField();
-        recieverField = new javax.swing.JTextField();
         errorLabel = new javax.swing.JLabel();
         nameLabel = new javax.swing.JLabel();
         logoutButton = new javax.swing.JButton();
@@ -53,15 +60,11 @@ public class WithdrawPanel extends javax.swing.JPanel {
         withdrawButton.setBackground(new java.awt.Color(248, 248, 248));
         withdrawButton.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         withdrawButton.setText("Confirm withdraw");
+        withdrawButton.addActionListener(this::withdrawButtonActionPerformed);
 
         withdrawalField.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         withdrawalField.setText("Amount");
         withdrawalField.addActionListener(this::withdrawalFieldActionPerformed);
-
-        recieverField.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        recieverField.setText("Reciever username");
-        recieverField.setToolTipText("Leave empty if withdrawal is to self.");
-        recieverField.addActionListener(this::recieverFieldActionPerformed);
 
         errorLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         errorLabel.setForeground(new java.awt.Color(204, 0, 51));
@@ -75,7 +78,6 @@ public class WithdrawPanel extends javax.swing.JPanel {
                 .addGap(27, 27, 27)
                 .addGroup(balanceInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(errorLabel)
-                    .addComponent(recieverField, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(withdrawLabel)
                     .addGroup(balanceInfoLayout.createSequentialGroup()
                         .addComponent(withdrawalField, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -86,17 +88,14 @@ public class WithdrawPanel extends javax.swing.JPanel {
         balanceInfoLayout.setVerticalGroup(
             balanceInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(balanceInfoLayout.createSequentialGroup()
-                .addGap(59, 59, 59)
+                .addContainerGap(59, Short.MAX_VALUE)
                 .addComponent(withdrawLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(balanceInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(withdrawButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(withdrawalField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(recieverField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(errorLabel)
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addGap(79, 79, 79)
+                .addComponent(errorLabel))
         );
 
         nameLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
@@ -141,7 +140,7 @@ public class WithdrawPanel extends javax.swing.JPanel {
                 .addComponent(nameLabel)
                 .addGap(18, 18, 18)
                 .addComponent(balanceInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(178, Short.MAX_VALUE))
+                .addContainerGap(217, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -157,8 +156,8 @@ public class WithdrawPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
-        // TODO add your handling code here:
-       // this.mainFrame.showScreen(new LoginPanel(mainFrame));
+        mainController.getAuthController().Logout();
+        this.mainFrame.showScreen(new LoginPanel(mainFrame, mainController));
     }//GEN-LAST:event_logoutButtonActionPerformed
 
     private void withdrawalFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_withdrawalFieldActionPerformed
@@ -166,13 +165,22 @@ public class WithdrawPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_withdrawalFieldActionPerformed
 
     private void HomeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HomeButtonActionPerformed
-        // TODO add your handling code here:
-//        this.mainFrame.showScreen(new HomePanel(mainFrame));
+        this.mainFrame.showScreen(new HomePanel(mainFrame, this.mainController));
     }//GEN-LAST:event_HomeButtonActionPerformed
 
-    private void recieverFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recieverFieldActionPerformed
+    private void withdrawButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_withdrawButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_recieverFieldActionPerformed
+        try {
+            this.mainController.getClientController().withdraw((Client) this.mainController.getCurrentUser(), this.withdrawalField.getText().trim());
+            this.mainFrame.showScreen(new HomePanel(mainFrame, this.mainController));
+        } catch (NumberFormatException e) {
+            errorLabel.setText("Please enter a valid number amount.");
+        } catch (EmptyFieldException e) {
+            errorLabel.setText("No empty fields allowed.");
+        } catch (InsufficientFundsException e) {
+            errorLabel.setText("Insufficient funds for withdrawal.");
+        }
+    }//GEN-LAST:event_withdrawButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -182,7 +190,6 @@ public class WithdrawPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JButton logoutButton;
     private javax.swing.JLabel nameLabel;
-    private javax.swing.JTextField recieverField;
     private javax.swing.JButton withdrawButton;
     private javax.swing.JLabel withdrawLabel;
     private javax.swing.JTextField withdrawalField;

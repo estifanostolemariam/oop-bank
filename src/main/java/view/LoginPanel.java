@@ -4,9 +4,11 @@
  */
 package view;
 
-import controller.AppController;
-import java.awt.List;
-import view.client.HomePanel;
+import controller.MainController;
+import model.services.LoginStatus;
+import model.users.Role;
+//import view.client;
+//import view.admin;
 
 /**
  *
@@ -18,15 +20,15 @@ public class LoginPanel extends javax.swing.JPanel {
      * Creates new form LoginPanel
      */
     private MainFrame mainFrame;
-    private AppController controller;
+    private MainController mainController;
     /**
      * Creates new form SignUpPanel
      * @param mainFrame
      */
-    public LoginPanel(MainFrame mainFrame, AppController controller) {
+    public LoginPanel(MainFrame mainFrame, MainController mainController) {
         initComponents();
         this.mainFrame = mainFrame;
-        this.controller = controller;
+        this.mainController = mainController;
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -142,18 +144,22 @@ public class LoginPanel extends javax.swing.JPanel {
 
     private void signupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signupButtonActionPerformed
         // TODO add your handling code here:
-        this.mainFrame.showScreen(new SignUpPanel(mainFrame, this.controller));
+        this.mainFrame.showScreen(new SignUpPanel(mainFrame, this.mainController));
     }//GEN-LAST:event_signupButtonActionPerformed
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         // TODO add your handling code here:
-        String status = this.controller.checkLoginDetails(
+        LoginStatus status = this.mainController.getAuthController().Login(
                 this.accountField.getText().trim(), 
                 new String(passwordField.getPassword()));
-        if (status == "success") {
-            this.mainFrame.showScreen(new HomePanel(mainFrame, this.controller));
-        } else {
-            showError(status);
+        switch (status) {
+            case LoginStatus.EMPTY_FIELDS: showError("No empty fields allowed."); break;
+            case LoginStatus.INVALID_CREDENTIALS: showError("Invalid username or password."); break;
+            case LoginStatus.SUCCESS: {
+                if (this.mainController.getCurrentUser().getRole() == Role.CLIENT) {this.mainFrame.showScreen(new view.client.HomePanel(mainFrame, this.mainController));}
+                else if (this.mainController.getCurrentUser().getRole() == Role.ADMIN) {this.mainFrame.showScreen(new view.admin.HomePanel(mainFrame, this.mainController));}
+                 break;
+            }
         }
     }//GEN-LAST:event_loginButtonActionPerformed
 

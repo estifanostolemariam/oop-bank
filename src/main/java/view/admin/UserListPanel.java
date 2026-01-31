@@ -4,20 +4,35 @@
  */
 package view.admin;
 
+import controller.MainController;
+import model.users.Admin;
+import model.account.Transaction;
+import model.users.Client;
 import view.LoginPanel;
 import view.MainFrame;
-/**
- *
- * @author estifanos
- */
-public class UserPanel extends javax.swing.JPanel {
+import java.util.ArrayList;
+import model.account.TransactionStatus;
+import view.Refreshable;
+import view.TransactionPanel;
+
+public class UserListPanel extends javax.swing.JPanel implements Refreshable {
     private MainFrame mainFrame;
-    /**
-     * Creates new form HomePanel
-     */
-    public UserPanel(MainFrame mainFrame) {
+    private MainController mainController;
+    private ArrayList<Transaction> transactionList;
+    
+    public UserListPanel(MainFrame mainFrame, MainController mainController, Client client) {
         initComponents();
         this.mainFrame = mainFrame;
+        this.mainController = mainController;
+        
+        Admin currentUser = (Admin) this.mainController.getCurrentUser();
+        this.nameLabel.setText("Logged in as "+currentUser.getName()+" (Admin)");
+        this.activityLabel.setText("Viewing account: "+client.getName());
+        this.accountBalanceLabel.setText(String.valueOf(client.getAccount().getBalance()));
+        this.creditScoreLabel.setText(String.valueOf(client.getAccount().getCreditScore()));
+        
+        this.transactionList = client.getAccount().getTransactions();    
+        refreshUI();
     }
 
     /**
@@ -33,24 +48,20 @@ public class UserPanel extends javax.swing.JPanel {
         balanceInfo = new javax.swing.JPanel();
         balanceLabel = new javax.swing.JLabel();
         accountBalanceLabel = new javax.swing.JLabel();
-        nameLabel = new javax.swing.JLabel();
+        activityLabel = new javax.swing.JLabel();
         creditInfo = new javax.swing.JPanel();
         scoreLabel = new javax.swing.JLabel();
         creditScoreLabel = new javax.swing.JLabel();
         tabPanel = new javax.swing.JTabbedPane();
         pendingPanel = new javax.swing.JScrollPane();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jPanel8 = new javax.swing.JPanel();
-        historyPanel = new javax.swing.JPanel();
-        jPanel9 = new javax.swing.JPanel();
-        jPanel10 = new javax.swing.JPanel();
-        jPanel11 = new javax.swing.JPanel();
+        pendingContainer = new javax.swing.JPanel();
+        historyPanel = new javax.swing.JScrollPane();
+        historyContainer = new javax.swing.JPanel();
         logoutButton = new javax.swing.JButton();
-        nameLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        logoutButton1 = new javax.swing.JButton();
-        logoutButton2 = new javax.swing.JButton();
+        nameLabel = new javax.swing.JLabel();
+        searchField = new javax.swing.JTextField();
+        searchButton = new javax.swing.JButton();
+        homeButton = new javax.swing.JButton();
 
         jPanel4.setBackground(new java.awt.Color(248, 248, 248));
 
@@ -83,8 +94,8 @@ public class UserPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        nameLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
-        nameLabel.setText("Viewing Mohammed M.");
+        activityLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
+        activityLabel.setText("Viewing Mohammed M.");
 
         creditInfo.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -117,102 +128,15 @@ public class UserPanel extends javax.swing.JPanel {
 
         tabPanel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
-        pendingPanel.setMaximumSize(new java.awt.Dimension(32767, 40));
-        pendingPanel.setMinimumSize(new java.awt.Dimension(16, 40));
-        pendingPanel.setPreferredSize(new java.awt.Dimension(733, 40));
+        pendingContainer.setBackground(new java.awt.Color(255, 255, 255));
+        pendingContainer.setLayout(new javax.swing.BoxLayout(pendingContainer, javax.swing.BoxLayout.Y_AXIS));
+        pendingPanel.setViewportView(pendingContainer);
 
-        jPanel1.setBackground(new java.awt.Color(204, 255, 255));
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+        tabPanel.addTab("Pending Transactions", pendingPanel);
 
-        jPanel3.setMaximumSize(new java.awt.Dimension(32767, 40));
-        jPanel3.setMinimumSize(new java.awt.Dimension(731, 40));
-        jPanel3.setPreferredSize(new java.awt.Dimension(739, 40));
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 739, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
-        );
-
-        jPanel1.add(jPanel3);
-
-        jPanel8.setMaximumSize(new java.awt.Dimension(32767, 40));
-        jPanel8.setMinimumSize(new java.awt.Dimension(731, 40));
-        jPanel8.setPreferredSize(new java.awt.Dimension(739, 40));
-
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 739, Short.MAX_VALUE)
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
-        );
-
-        jPanel1.add(jPanel8);
-
-        pendingPanel.setViewportView(jPanel1);
-
-        tabPanel.addTab("Pending Applications", pendingPanel);
-
-        historyPanel.setBackground(new java.awt.Color(204, 204, 204));
-
-        jPanel9.setBackground(new java.awt.Color(204, 255, 255));
-        jPanel9.setLayout(new javax.swing.BoxLayout(jPanel9, javax.swing.BoxLayout.Y_AXIS));
-
-        jPanel10.setMaximumSize(new java.awt.Dimension(32767, 40));
-        jPanel10.setMinimumSize(new java.awt.Dimension(731, 40));
-        jPanel10.setPreferredSize(new java.awt.Dimension(739, 40));
-
-        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
-        jPanel10.setLayout(jPanel10Layout);
-        jPanel10Layout.setHorizontalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 739, Short.MAX_VALUE)
-        );
-        jPanel10Layout.setVerticalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
-        );
-
-        jPanel9.add(jPanel10);
-
-        jPanel11.setMaximumSize(new java.awt.Dimension(32767, 40));
-        jPanel11.setMinimumSize(new java.awt.Dimension(731, 40));
-        jPanel11.setPreferredSize(new java.awt.Dimension(739, 40));
-
-        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
-        jPanel11.setLayout(jPanel11Layout);
-        jPanel11Layout.setHorizontalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 739, Short.MAX_VALUE)
-        );
-        jPanel11Layout.setVerticalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
-        );
-
-        jPanel9.add(jPanel11);
-
-        javax.swing.GroupLayout historyPanelLayout = new javax.swing.GroupLayout(historyPanel);
-        historyPanel.setLayout(historyPanelLayout);
-        historyPanelLayout.setHorizontalGroup(
-            historyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, historyPanelLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        historyPanelLayout.setVerticalGroup(
-            historyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-        );
+        historyContainer.setBackground(new java.awt.Color(255, 255, 255));
+        historyContainer.setLayout(new javax.swing.BoxLayout(historyContainer, javax.swing.BoxLayout.Y_AXIS));
+        historyPanel.setViewportView(historyContainer);
 
         tabPanel.addTab("Transaction History", historyPanel);
 
@@ -222,21 +146,21 @@ public class UserPanel extends javax.swing.JPanel {
         logoutButton.setText("Log out");
         logoutButton.addActionListener(this::logoutButtonActionPerformed);
 
-        nameLabel2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
-        nameLabel2.setText("Logged in as Akrem K. (Admin)");
+        nameLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
+        nameLabel.setText("Logged in as Akrem K. (Admin)");
 
-        jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jTextField1.setText("Search for an Account");
+        searchField.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        searchField.setText("Search for an Account");
 
-        logoutButton1.setBackground(new java.awt.Color(248, 248, 248));
-        logoutButton1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        logoutButton1.setText("Search");
-        logoutButton1.addActionListener(this::logoutButton1ActionPerformed);
+        searchButton.setBackground(new java.awt.Color(248, 248, 248));
+        searchButton.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        searchButton.setText("Search");
+        searchButton.addActionListener(this::searchButtonActionPerformed);
 
-        logoutButton2.setBackground(new java.awt.Color(248, 248, 248));
-        logoutButton2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        logoutButton2.setText("Home");
-        logoutButton2.addActionListener(this::logoutButton2ActionPerformed);
+        homeButton.setBackground(new java.awt.Color(248, 248, 248));
+        homeButton.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        homeButton.setText("Home");
+        homeButton.addActionListener(this::homeButtonActionPerformed);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -251,14 +175,14 @@ public class UserPanel extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(creditInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(nameLabel2)
-                        .addComponent(nameLabel, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addComponent(nameLabel)
+                        .addComponent(activityLabel, javax.swing.GroupLayout.Alignment.LEADING))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                        .addComponent(logoutButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(homeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1)
+                        .addComponent(searchField)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(logoutButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(46, 46, 46)
                         .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(72, 72, 72))
@@ -269,19 +193,19 @@ public class UserPanel extends javax.swing.JPanel {
                 .addGap(21, 21, 21)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logoutButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logoutButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(homeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
-                .addComponent(nameLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nameLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(activityLabel)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(creditInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(balanceInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addComponent(tabPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                .addComponent(tabPanel)
                 .addContainerGap())
         );
 
@@ -298,41 +222,58 @@ public class UserPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
-        // TODO add your handling code here:
-//        this.mainFrame.showScreen(new LoginPanel(mainFrame));
+        mainController.getAuthController().Logout();
+        this.mainFrame.showScreen(new LoginPanel(mainFrame, mainController));
     }//GEN-LAST:event_logoutButtonActionPerformed
 
-    private void logoutButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_logoutButton1ActionPerformed
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        if (searchField.getText().trim().length() > 0) {
+            this.mainFrame.showScreen(new SearchResultsPanel(mainFrame, this.mainController, searchField.getText().trim()));
+        }
+    }//GEN-LAST:event_searchButtonActionPerformed
 
-    private void logoutButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_logoutButton2ActionPerformed
+    private void homeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeButtonActionPerformed
+        this.mainFrame.showScreen(new HomePanel(mainFrame, this.mainController));
+    }//GEN-LAST:event_homeButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel accountBalanceLabel;
+    private javax.swing.JLabel activityLabel;
     private javax.swing.JPanel balanceInfo;
     private javax.swing.JLabel balanceLabel;
     private javax.swing.JPanel creditInfo;
     private javax.swing.JLabel creditScoreLabel;
-    private javax.swing.JPanel historyPanel;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel10;
-    private javax.swing.JPanel jPanel11;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel historyContainer;
+    private javax.swing.JScrollPane historyPanel;
+    private javax.swing.JButton homeButton;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JButton logoutButton;
-    private javax.swing.JButton logoutButton1;
-    private javax.swing.JButton logoutButton2;
     private javax.swing.JLabel nameLabel;
-    private javax.swing.JLabel nameLabel2;
+    private javax.swing.JPanel pendingContainer;
     private javax.swing.JScrollPane pendingPanel;
     private javax.swing.JLabel scoreLabel;
+    private javax.swing.JButton searchButton;
+    private javax.swing.JTextField searchField;
     private javax.swing.JTabbedPane tabPanel;
     // End of variables declaration//GEN-END:variables
+    @Override
+    public void refreshUI() {
+        refreshTransactionPanel();
+    }
+    
+    public void refreshTransactionPanel() {
+        pendingContainer.removeAll();
+        if (this.transactionList == null) {return;}
+        for (Transaction t : this.transactionList) {
+            if (t.getStatus() == TransactionStatus.PENDING) { pendingContainer.add(new TransactionPanel(t, this.mainController, this)); }
+            else { historyContainer.add(new TransactionPanel(t, this.mainController, this)); }
+        }
+
+        pendingContainer.revalidate();
+        pendingContainer.repaint();
+//        JScrollBar bar = scrollPane.getVerticalScrollBar();
+//        bar.setValue(bar.getMaximum());
+    }
+
 }

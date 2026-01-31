@@ -4,17 +4,47 @@
  */
 package view;
 
+import controller.MainController;
+import javax.swing.JPanel;
+import model.account.Transaction;
+import model.account.TransactionStatus;
+import model.account.TransactionType;
+import model.exceptions.InsufficientFundsException;
+import model.users.Admin;
+import model.users.Client;
+import model.users.Role;
+import view.client.HomePanel;
+
 /**
  *
  * @author estifanos
  */
 public class TransactionPanel extends javax.swing.JPanel {
-
+    private MainController mainController;
+    private Transaction t;
+    private Refreshable parentPanel;
     /**
      * Creates new form Transaction
      */
-    public TransactionPanel() {
+    public TransactionPanel(Transaction t, MainController mainController, Refreshable parentPanel) {
         initComponents();
+        this.mainController = mainController;
+        this.t = t;
+        this.parentPanel = parentPanel;
+        this.transactionOwner.setText(t.getUsername());
+        this.transactionAmount.setText(String.valueOf(t.getAmount()));
+        this.transactionType.setText(t.getTypeAsString());
+        this.transactionStatus.setText(t.getStatusAsString());   
+        this.settleButton.show(false);
+        this.rejectButton.show(false);
+        if (t.getType()==TransactionType.DEBT && t.getStatus()==TransactionStatus.PENDING && mainController.getCurrentUser().getRole() == Role.CLIENT) {
+            this.settleButton.setText("Repay");
+            this.settleButton.show(true);
+        } else if (t.getType()==TransactionType.LOAN && t.getStatus()==TransactionStatus.PENDING && mainController.getCurrentUser().getRole() == Role.ADMIN) {
+            this.settleButton.setText("Accept");
+            this.settleButton.show(true);
+            this.rejectButton.show(true);
+        }
     }
 
     /**
@@ -27,25 +57,44 @@ public class TransactionPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         transactionStatus = new javax.swing.JLabel();
-        transactionStatus1 = new javax.swing.JLabel();
-        transactionStatus2 = new javax.swing.JLabel();
-        transactionStatus3 = new javax.swing.JLabel();
+        transactionType = new javax.swing.JLabel();
+        transactionAmount = new javax.swing.JLabel();
+        transactionOwner = new javax.swing.JLabel();
+        settleButton = new javax.swing.JButton();
+        rejectButton = new javax.swing.JButton();
+        errorLabel = new javax.swing.JLabel();
 
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2));
-        setMaximumSize(new java.awt.Dimension(32767, 50));
-        setMinimumSize(new java.awt.Dimension(0, 50));
+        setMaximumSize(new java.awt.Dimension(32767, 60));
+        setMinimumSize(new java.awt.Dimension(0, 60));
 
         transactionStatus.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         transactionStatus.setText("STATUS");
 
-        transactionStatus1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        transactionStatus1.setText("TYPE");
+        transactionType.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        transactionType.setText("TYPE");
 
-        transactionStatus2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        transactionStatus2.setText("AMOUNT");
+        transactionAmount.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        transactionAmount.setText("AMOUNT");
 
-        transactionStatus3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        transactionStatus3.setText("APPLICANT");
+        transactionOwner.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        transactionOwner.setText("APPLICANT");
+
+        settleButton.setBackground(new java.awt.Color(248, 248, 248));
+        settleButton.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        settleButton.setForeground(new java.awt.Color(102, 255, 0));
+        settleButton.setText("Settle");
+        settleButton.addActionListener(this::settleButtonActionPerformed);
+
+        rejectButton.setBackground(new java.awt.Color(248, 248, 248));
+        rejectButton.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        rejectButton.setForeground(new java.awt.Color(204, 0, 204));
+        rejectButton.setText("Reject");
+        rejectButton.addActionListener(this::rejectButtonActionPerformed);
+
+        errorLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        errorLabel.setForeground(new java.awt.Color(204, 0, 51));
+        errorLabel.setText(" ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -53,33 +102,69 @@ public class TransactionPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(transactionStatus3)
+                .addComponent(transactionOwner)
                 .addGap(18, 18, 18)
-                .addComponent(transactionStatus1)
+                .addComponent(transactionType)
                 .addGap(18, 18, 18)
-                .addComponent(transactionStatus2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
+                .addComponent(transactionAmount)
+                .addGap(18, 18, 18)
+                .addComponent(errorLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
+                .addComponent(rejectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(settleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(transactionStatus)
-                .addGap(27, 27, 27))
+                .addGap(18, 18, 18))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(settleButton)
                     .addComponent(transactionStatus)
-                    .addComponent(transactionStatus1)
-                    .addComponent(transactionStatus2)
-                    .addComponent(transactionStatus3))
-                .addContainerGap(20, Short.MAX_VALUE))
+                    .addComponent(transactionType)
+                    .addComponent(transactionAmount)
+                    .addComponent(transactionOwner)
+                    .addComponent(rejectButton)
+                    .addComponent(errorLabel))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void settleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settleButtonActionPerformed
+        if (this.mainController.getCurrentUser().getRole()==Role.CLIENT) {
+            Client client = (Client) this.mainController.getCurrentUser();
+            try {
+                this.mainController.getClientController().repayLoan(client, t);
+                parentPanel.refreshUI();
+            } catch (InsufficientFundsException e) {
+                errorLabel.setText("Not enough money to repay.");
+            }
+        }
+        if (this.mainController.getCurrentUser().getRole()==Role.ADMIN) {
+            Admin admin = (Admin) this.mainController.getCurrentUser();
+            this.mainController.getAdminController().approveLoan(admin, t);
+            parentPanel.refreshUI();
+        }
+    }//GEN-LAST:event_settleButtonActionPerformed
+
+    private void rejectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rejectButtonActionPerformed
+        // TODO add your handling code here:
+        Admin admin = (Admin) this.mainController.getCurrentUser();
+        this.mainController.getAdminController().rejectLoan(admin, t);
+        parentPanel.refreshUI();
+    }//GEN-LAST:event_rejectButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel errorLabel;
+    private javax.swing.JButton rejectButton;
+    private javax.swing.JButton settleButton;
+    private javax.swing.JLabel transactionAmount;
+    private javax.swing.JLabel transactionOwner;
     private javax.swing.JLabel transactionStatus;
-    private javax.swing.JLabel transactionStatus1;
-    private javax.swing.JLabel transactionStatus2;
-    private javax.swing.JLabel transactionStatus3;
+    private javax.swing.JLabel transactionType;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,6 +4,9 @@
  */
 package view.client;
 
+import controller.MainController;
+import model.exceptions.EmptyFieldException;
+import model.users.Client;
 import view.LoginPanel;
 import view.MainFrame;
 
@@ -12,15 +15,20 @@ import view.MainFrame;
  * @author estifanos
  */
 public class DepositPanel extends javax.swing.JPanel {
+    private MainController mainController;
 
     
     private MainFrame mainFrame;/**
      * Creates new form DepositPanel
      */
-    public DepositPanel(MainFrame mainFrame) {
+    public DepositPanel(MainFrame mainFrame, MainController mainController) {
         initComponents();
         
         this.mainFrame = mainFrame;
+        this.mainController = mainController;
+        Client currentUser = (Client) this.mainController.getCurrentUser();
+        this.nameLabel.setText("Logged in as "+currentUser.getName()+" (Client)");
+        
     }
 
     /**
@@ -52,8 +60,10 @@ public class DepositPanel extends javax.swing.JPanel {
         depositButton.setBackground(new java.awt.Color(248, 248, 248));
         depositButton.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         depositButton.setText("Confirm deposit");
+        depositButton.addActionListener(this::depositButtonActionPerformed);
 
         depositField.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        depositField.addActionListener(this::depositFieldActionPerformed);
 
         errorLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         errorLabel.setForeground(new java.awt.Color(204, 0, 51));
@@ -146,14 +156,29 @@ public class DepositPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
-        // TODO add your handling code here:
-        //this.mainFrame.showScreen(new LoginPanel(mainFrame));
+        mainController.getAuthController().Logout();
+        this.mainFrame.showScreen(new LoginPanel(mainFrame, mainController));
     }//GEN-LAST:event_logoutButtonActionPerformed
 
     private void HomeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HomeButtonActionPerformed
-        // TODO add your handling code here:
-//        this.mainFrame.showScreen(new HomePanel(mainFrame));
+        this.mainFrame.showScreen(new HomePanel(mainFrame, this.mainController));
     }//GEN-LAST:event_HomeButtonActionPerformed
+
+    private void depositButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_depositButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+            this.mainController.getClientController().deposit((Client) this.mainController.getCurrentUser(), this.depositField.getText().trim());
+            this.mainFrame.showScreen(new HomePanel(mainFrame, this.mainController));
+        } catch (NumberFormatException e) {
+            errorLabel.setText("Please enter a valid number amount.");
+        } catch (EmptyFieldException e) {
+            errorLabel.setText("No empty fields allowed.");
+        }
+    }//GEN-LAST:event_depositButtonActionPerformed
+
+    private void depositFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_depositFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_depositFieldActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
