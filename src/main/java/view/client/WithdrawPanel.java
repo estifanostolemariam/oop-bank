@@ -94,8 +94,9 @@ public class WithdrawPanel extends javax.swing.JPanel {
                 .addGroup(balanceInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(withdrawButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(withdrawalField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(79, 79, 79)
-                .addComponent(errorLabel))
+                .addGap(18, 18, 18)
+                .addComponent(errorLabel)
+                .addGap(61, 61, 61))
         );
 
         nameLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
