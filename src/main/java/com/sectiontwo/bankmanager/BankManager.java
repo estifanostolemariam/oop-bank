@@ -13,7 +13,6 @@ import view.MainFrame;
 
 import controller.MainController;
 
-// Main program
 public class BankManager {
 
     public static void main(String[] args) {
@@ -24,7 +23,7 @@ public class BankManager {
             MainFrame mainFrame = new MainFrame();
             
             // Initialize database, and controller and service (model).
-            UserRepository userRepo = new UserRepository("db");
+            UserRepository userRepo = new UserRepository("Credentials.txt","Transactions.txt");
             MainService mainService = new MainService(userRepo);
             MainController mainController = new MainController(mainFrame, mainService);
             
@@ -32,6 +31,13 @@ public class BankManager {
             LoginPanel loginPanel = new LoginPanel(mainFrame, mainController);        
             mainFrame.setVisible(true);
             mainFrame.showScreen(loginPanel);
+            
+            
+            // Save data on program exit.
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Program is exiting. Saving data...");
+                userRepo.saveData();
+            }));
         });
     }
 }
