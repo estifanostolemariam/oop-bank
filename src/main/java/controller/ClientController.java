@@ -33,7 +33,12 @@ public class ClientController {
         if (rawAmount.length()==0) {
             throw new EmptyFieldException("Field cannot be empty");
         }
+        
         double amount = Double.parseDouble(rawAmount);
+        // Make sure amount isn't zero.
+        if (amount <= 0) {
+            throw new NumberFormatException("Amount can't be zero");
+        }
         clientService.deposit(client, amount);
     }
     
@@ -42,7 +47,12 @@ public class ClientController {
         if (rawAmount.length()==0) {
             throw new EmptyFieldException("Field cannot be empty");
         }
+        
         double amount = Double.parseDouble(rawAmount);
+        // Make sure amount isn't zero.
+        if (amount <= 0) {
+            throw new NumberFormatException("Amount can't be zero");
+        }
         clientService.withdraw(client, amount);
     }
 
@@ -51,7 +61,12 @@ public class ClientController {
         if (rawAmount.length()==0) {
             throw new EmptyFieldException("Field cannot be empty");
         }
+        
         double amount = Double.parseDouble(rawAmount);
+        // Make sure amount isn't zero.
+        if (amount <= 0) {
+            throw new NumberFormatException("Amount can't be zero");
+        }
         clientService.requestLoan(client, amount);
     }
     
