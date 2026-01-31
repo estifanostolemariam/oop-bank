@@ -29,7 +29,7 @@ public class Transaction {
         String stringType = "";
         switch (this.type) {
             case TransactionType.DEPOSIT: stringType="DEPOSIT"; break;
-            case TransactionType.WITHDRAWAL: stringType="WITHDRAW"; break;
+            case TransactionType.WITHDRAWAL: stringType="WITHDRAWAL"; break;
             case TransactionType.LOAN: stringType="LOAN"; break;
             case TransactionType.DEBT: stringType="DEBT"; break;
         }
@@ -47,4 +47,5 @@ public class Transaction {
     
     
 }
+
 
